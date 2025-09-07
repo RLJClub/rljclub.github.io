@@ -4,10 +4,34 @@
     <title>🧠 RL Journal Club</title>
     <link>http://localhost:1313/</link>
     <description>Recent content on 🧠 RL Journal Club</description>
-    <generator>Hugo -- 0.129.0</generator>
+    <generator>Hugo -- 0.147.7</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 Aug 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 07 Sep 2025 17:14:00 +0200</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reward Shaping Techniques in Reinforcement Learning</title>
+      <link>http://localhost:1313/posts/reward-shaping/</link>
+      <pubDate>Sun, 07 Sep 2025 17:14:00 +0200</pubDate>
+      <guid>http://localhost:1313/posts/reward-shaping/</guid>
+      <description>&lt;h2 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction-the-central-role-of-the-reward-signal&#34;&gt;Introduction: The Central Role of the Reward Signal&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-problem-drowning-in-silence-with-reward-sparsity&#34;&gt;The Problem: Drowning in Silence with Reward Sparsity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-foundation-potential-based-reward-shaping-pbrs&#34;&gt;The Foundation: Potential-Based Reward Shaping (PBRS)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#advanced-methods-automating-reward-design&#34;&gt;Advanced Methods: Automating Reward Design&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#learning-the-reward-function&#34;&gt;Learning the Reward Function&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#shaping-for-intelligent-exploration&#34;&gt;Shaping for Intelligent Exploration&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#inferring-true-objectives-to-prevent-reward-hacking&#34;&gt;Inferring True Objectives to Prevent Reward Hacking&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion--key-takeaways&#34;&gt;Conclusion &amp;amp; Key Takeaways&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#references&#34;&gt;References&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;introduction-the-central-role-of-the-reward-signal&#34;&gt;Introduction: The Central Role of the Reward Signal&lt;/h3&gt;
+&lt;p&gt;In Reinforcement Learning (RL), an agent learns to make decisions by interacting with an environment. The entire learning process is guided by a single scalar signal: the &lt;strong&gt;reward&lt;/strong&gt;. This reward function is the most critical component of an RL problem, as it implicitly defines the task&amp;rsquo;s goal (Eschmann, 2021). It is the mechanism through which we communicate what we want the agent to achieve.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Three Dogmas of Reinforcement Learning</title>
       <link>http://localhost:1313/posts/three-dogmas-of-reinforcement-learning/</link>
@@ -27,8 +51,23 @@
       <link>http://localhost:1313/us/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/us/</guid>
-      <description>Welcome to our blog! We are a team of enthusiastic professors and students from Sharif University of Technology who are eager to share our insights and passion for this fascinating field. Our aim is to share our knowledge and excitement about this cutting-edge field with you ❤️.
-Professors Professor Mohammad Hossein Rohban Professor Ehsaneddin Asgari Students Arash Alikhani Alireza Nobakht Labs RIML Lab NLP &amp;amp; DH Lab We hope you enjoy our blog and find our content both informative and inspiring 🚀!</description>
+      <description>&lt;p&gt;Welcome to our blog! We are a team of enthusiastic professors and students from Sharif University of Technology who are eager to share our insights and passion for this fascinating field. Our aim is to share our knowledge and excitement about this cutting-edge field with you ❤️.&lt;/p&gt;
+&lt;h2 id=&#34;professors&#34;&gt;Professors&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Professor &lt;a href=&#34;https://www.linkedin.com/in/mohammad-hossein-rohban-75567677&#34;&gt;Mohammad Hossein Rohban&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Professor &lt;a href=&#34;https://www.linkedin.com/in/ehsaneddinasgari&#34;&gt;Ehsaneddin Asgari&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;students&#34;&gt;Students&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.linkedin.com/in/infinity2357&#34;&gt;Arash Alikhani&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.linkedin.com/in/alireza-nobakht&#34;&gt;Alireza Nobakht&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;labs&#34;&gt;Labs&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/rohban-lab&#34;&gt;RIML Lab&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/language-ml&#34;&gt;NLP &amp;amp; DH Lab&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We hope you enjoy our blog and find our content both informative and inspiring 🚀!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

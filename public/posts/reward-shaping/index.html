@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Reward Shaping Techniques in Reinforcement Learning | 🧠 RL Journal Club</title>
+<meta name="keywords" content="">
+<meta name="description" content="Table of Contents
+
+Introduction: The Central Role of the Reward Signal
+The Problem: Drowning in Silence with Reward Sparsity
+The Foundation: Potential-Based Reward Shaping (PBRS)
+Advanced Methods: Automating Reward Design
+
+Learning the Reward Function
+Shaping for Intelligent Exploration
+Inferring True Objectives to Prevent Reward Hacking
+
+
+Conclusion &amp; Key Takeaways
+References
+
+
+Introduction: The Central Role of the Reward Signal
+In Reinforcement Learning (RL), an agent learns to make decisions by interacting with an environment. The entire learning process is guided by a single scalar signal: the reward. This reward function is the most critical component of an RL problem, as it implicitly defines the task&rsquo;s goal (Eschmann, 2021). It is the mechanism through which we communicate what we want the agent to achieve.">
+<meta name="author" content="Ariana Dariuni">
+<link rel="canonical" href="http://localhost:1313/posts/reward-shaping/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.efaeedb03dbde0744b4fde17738e29755de418ee1990a9ec44727042873c1e52.css" integrity="sha256-767tsD294HRLT94Xc44pdV3kGO4ZkKnsRHJwQoc8HlI=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/reward-shaping/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          
+          
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          
+          throwOnError : false
+        });
+    });
+</script>
+    
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="🧠 RL Journal Club (Alt + H)">🧠 RL Journal Club</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/archives" title="🗃️ Archive">
+                    <span>🗃️ Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search" title="🔍 Search">
+                    <span>🔍 Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="🏷️ Tags">
+                    <span>🏷️ Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/us/" title="👤 Us">
+                    <span>👤 Us</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Reward Shaping Techniques in Reinforcement Learning
+    </h1>
+    <div class="post-meta"><span title='2025-09-07 17:14:00 +0200 +0200'>September 7, 2025</span>&nbsp;·&nbsp;Ariana Dariuni
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#table-of-contents" aria-label="Table of Contents">Table of Contents</a><ul>
+                        
+                <li>
+                    <a href="#introduction-the-central-role-of-the-reward-signal" aria-label="Introduction: The Central Role of the Reward Signal">Introduction: The Central Role of the Reward Signal</a></li>
+                <li>
+                    <a href="#the-problem-drowning-in-silence-with-reward-sparsity" aria-label="The Problem: Drowning in Silence with Reward Sparsity">The Problem: Drowning in Silence with Reward Sparsity</a></li>
+                <li>
+                    <a href="#the-foundation-potential-based-reward-shaping-pbrs" aria-label="The Foundation: Potential-Based Reward Shaping (PBRS)">The Foundation: Potential-Based Reward Shaping (PBRS)</a></li>
+                <li>
+                    <a href="#advanced-methods-automating-reward-design" aria-label="Advanced Methods: Automating Reward Design">Advanced Methods: Automating Reward Design</a><ul>
+                        
+                <li>
+                    <a href="#learning-the-reward-function" aria-label="Learning the Reward Function">Learning the Reward Function</a></li>
+                <li>
+                    <a href="#shaping-for-intelligent-exploration" aria-label="Shaping for Intelligent Exploration">Shaping for Intelligent Exploration</a></li>
+                <li>
+                    <a href="#inferring-true-objectives-to-prevent-reward-hacking" aria-label="Inferring True Objectives to Prevent Reward Hacking">Inferring True Objectives to Prevent Reward Hacking</a></li></ul>
+                </li>
+                <li>
+                    <a href="#conclusion--key-takeaways" aria-label="Conclusion &amp; Key Takeaways">Conclusion &amp; Key Takeaways</a></li>
+                <li>
+                    <a href="#references" aria-label="References">References</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="table-of-contents">Table of Contents<a hidden class="anchor" aria-hidden="true" href="#table-of-contents">#</a></h2>
+<ul>
+<li><a href="#introduction-the-central-role-of-the-reward-signal">Introduction: The Central Role of the Reward Signal</a></li>
+<li><a href="#the-problem-drowning-in-silence-with-reward-sparsity">The Problem: Drowning in Silence with Reward Sparsity</a></li>
+<li><a href="#the-foundation-potential-based-reward-shaping-pbrs">The Foundation: Potential-Based Reward Shaping (PBRS)</a></li>
+<li><a href="#advanced-methods-automating-reward-design">Advanced Methods: Automating Reward Design</a>
+<ul>
+<li><a href="#learning-the-reward-function">Learning the Reward Function</a></li>
+<li><a href="#shaping-for-intelligent-exploration">Shaping for Intelligent Exploration</a></li>
+<li><a href="#inferring-true-objectives-to-prevent-reward-hacking">Inferring True Objectives to Prevent Reward Hacking</a></li>
+</ul>
+</li>
+<li><a href="#conclusion--key-takeaways">Conclusion &amp; Key Takeaways</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<hr>
+<h3 id="introduction-the-central-role-of-the-reward-signal">Introduction: The Central Role of the Reward Signal<a hidden class="anchor" aria-hidden="true" href="#introduction-the-central-role-of-the-reward-signal">#</a></h3>
+<p>In Reinforcement Learning (RL), an agent learns to make decisions by interacting with an environment. The entire learning process is guided by a single scalar signal: the <strong>reward</strong>. This reward function is the most critical component of an RL problem, as it implicitly defines the task&rsquo;s goal (Eschmann, 2021). It is the mechanism through which we communicate what we want the agent to achieve.</p>
+<p>However, a poorly designed reward signal can be ineffective or even misleading. Imagine training a robot to navigate a maze where it only gets a reward at the very end. It could wander aimlessly for days without learning anything meaningful. This is the problem of <strong>reward sparsity</strong>, one of the biggest bottlenecks preventing RL from being applied to more complex, real-world problems, especially in continuous time and space domains (Doya, 2000).</p>
+<p>This article explores <strong>Reward Shaping</strong>, a powerful class of techniques designed to solve this. Instead of letting the agent wander in the dark, we provide it with intelligent &ldquo;hints&rdquo; to guide it toward the goal, dramatically accelerating learning while, crucially, attempting to preserve the original task&rsquo;s objective.</p>
+<p><img loading="lazy" src="reward_shaping.png" alt="Conceptual diagram of an RL agent receiving sparse vs. shaped rewards."  />
+</p>
+<h3 id="the-problem-drowning-in-silence-with-reward-sparsity">The Problem: Drowning in Silence with Reward Sparsity<a hidden class="anchor" aria-hidden="true" href="#the-problem-drowning-in-silence-with-reward-sparsity">#</a></h3>
+<p>Reward sparsity is a scenario where meaningful rewards are received only after completing a long and specific sequence of correct actions. In all other states, the agent receives a reward of zero. This creates a cascade of critical issues:</p>
+<ul>
+<li><strong>Inefficient Exploration:</strong> In a high-dimensional state space, the probability of stumbling upon a rewarding state through random exploration is infinitesimally small. The agent gets no learning signal to update its policy.</li>
+<li><strong>The Credit Assignment Problem:</strong> Even if the agent gets lucky and finds the reward, it&rsquo;s nearly impossible to determine which of the thousands of preceding actions were crucial for success and which were irrelevant or detrimental.</li>
+<li><strong>Complete Learning Failure:</strong> In most practical scenarios, the agent fails to discover the reward at all. Its performance flatlines, and it never learns to solve the task.</li>
+</ul>
+<p>The fundamental challenge is this: how can we provide a denser, more informative signal to the agent without accidentally changing the optimal behavior or introducing unintended loopholes that the agent can exploit?</p>
+<h3 id="the-foundation-potential-based-reward-shaping-pbrs">The Foundation: Potential-Based Reward Shaping (PBRS)<a hidden class="anchor" aria-hidden="true" href="#the-foundation-potential-based-reward-shaping-pbrs">#</a></h3>
+<p>The most celebrated and theoretically-grounded solution is <strong>Potential-Based Reward Shaping (PBRS)</strong>. This technique, introduced by Ng, Harada, and Russell (1999), provides a way to add an auxiliary reward to guide the agent without altering the optimal policy.</p>
+<p>The core idea is to define a <strong>potential function</strong> $\Phi(s)$ that estimates the &ldquo;value&rdquo; or &ldquo;promise&rdquo; of being in a particular state $s$. The new, shaped reward $R&rsquo;$ is then calculated by adding the <em>change in potential</em> to the original environment reward $R$.</p>
+<p>$$R&rsquo;(s, a, s&rsquo;) = R(s, a, s&rsquo;) + \underbrace{\gamma\Phi(s&rsquo;) - \Phi(s)}_{\text{Shaping Reward}}$$</p>
+<ul>
+<li>$R(s, a, s&rsquo;)$: The original (sparse) environment reward.</li>
+<li>$\Phi(s)$: The potential function, which maps states to a scalar value. For a maze-solving robot, $\Phi(s)$ could be defined as the negative Euclidean distance to the goal.</li>
+<li>$\gamma$: The discount factor from the underlying Markov Decision Process.</li>
+</ul>
+<p>When the agent moves from a state $s$ to a more &ldquo;promising&rdquo; state $s&rsquo;$, the potential $\Phi(s&rsquo;)$ is higher than $\Phi(s)$, resulting in a positive bonus reward. This provides an immediate, dense signal that guides the agent in the right direction.</p>
+<p><strong>The Theoretical Guarantee: Policy Invariance</strong><br>
+The genius of PBRS lies in its theoretical guarantee of <strong>policy invariance</strong>. Ng et al. (1999) proved that any optimal policy learned with a potential-based shaped reward is also an optimal policy for the original, unshaped problem. This works because over any trajectory, the extra rewards form a telescoping sum that only depends on the start and end states, not the path taken. This ensures the long-term desirability of paths remains unchanged, making PBRS a &ldquo;safe&rdquo; way to accelerate learning.</p>
+<h3 id="advanced-methods-automating-reward-design">Advanced Methods: Automating Reward Design<a hidden class="anchor" aria-hidden="true" href="#advanced-methods-automating-reward-design">#</a></h3>
+<h4 id="learning-the-reward-function">Learning the Reward Function<a hidden class="anchor" aria-hidden="true" href="#learning-the-reward-function">#</a></h4>
+<p><strong>Policy Gradient for Reward Design (PGRD)</strong></p>
+<p><img loading="lazy" src="Pgrd.png" alt="PGRD performance with A) a poor model and B) a partially observable world."  />
+</p>
+<h4 id="shaping-for-intelligent-exploration">Shaping for Intelligent Exploration<a hidden class="anchor" aria-hidden="true" href="#shaping-for-intelligent-exploration">#</a></h4>
+<p><strong>Novelty-Driven (Hash-Based Exploration)</strong></p>
+<p><img loading="lazy" src="hash_result.png" alt="SimHash hash-based exploration results."  />
+</p>
+<p><strong>Uncertainty-Driven (RUNE)</strong></p>
+<p><img loading="lazy" src="Rune.png" alt="RUNE uses uncertainty in ensemble learned reward functions as exploration bonus."  />
+</p>
+<p>an example of RUNE model
+<img loading="lazy" src="RUNE_generativemodel_network.png" alt="RUNE generative model network architecture"  />
+</p>
+<h4 id="inferring-true-objectives-to-prevent-reward-hacking">Inferring True Objectives to Prevent Reward Hacking<a hidden class="anchor" aria-hidden="true" href="#inferring-true-objectives-to-prevent-reward-hacking">#</a></h4>
+<p>Manually designed rewards are often flawed and can be exploited by agents, a problem known as <strong>reward hacking</strong>. To mitigate this, we can infer the &ldquo;true&rdquo; objective from expert demonstrations rather than specifying it directly.</p>
+<p><strong>Inverse Reinforcement Learning (IRL)</strong><br>
+IRL flips the standard RL problem on its head. Instead of using a reward function to find an optimal policy, IRL observes an expert&rsquo;s policy to infer the reward function the expert was likely optimizing (Arora &amp; Doshi, 2021). This is incredibly powerful for teaching agents complex behaviors where defining the reward explicitly is difficult, like driving a car. The goal is to find a reward function that makes the expert&rsquo;s behavior appear near-optimal.</p>
+<h3 id="conclusion--key-takeaways">Conclusion &amp; Key Takeaways<a hidden class="anchor" aria-hidden="true" href="#conclusion--key-takeaways">#</a></h3>
+<p>The journey to solve reward sparsity has pushed the field of RL from manual engineering to sophisticated, automated systems.</p>
+<ul>
+<li>Reward shaping is an essential technique for making RL practical in complex environments with sparse rewards.</li>
+<li><strong>PBRS</strong> provides a safe, theoretically-grounded method to accelerate learning by providing dense &ldquo;hints&rdquo; without altering the optimal policy.</li>
+<li><strong>Advanced methods</strong> automate reward design, offering greater autonomy and robustness. They allow agents to learn their own rewards, explore intelligently based on curiosity and uncertainty, and infer human objectives from demonstrations to avoid reward hacking.</li>
+<li>The continued evolution of these techniques is paving the way for more aligned, capable, and autonomous agents that can solve meaningful real-world problems.</li>
+</ul>
+<h3 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h3>
+<p>Arora, S., &amp; Doshi, P. (2021). A survey of inverse reinforcement learning: Challenges, methods and progress. <em>Artificial Intelligence</em>, 297, 103500.</p>
+<p>Doya, K. (2000). Reinforcement learning in continuous time and space. <em>Neural Computation</em>, 12(1), 219–245.</p>
+<p>Duan, Y., Chen, X., Houthooft, R., Schulman, J., &amp; Abbeel, P. (2016). Benchmarking deep reinforcement learning for continuous control. <em>Proceedings of the International Conference on Machine Learning</em>, 1329–1338.</p>
+<p>Eschmann, J. (2021). Reward function design in reinforcement learning. In <em>Studies in Computational Intelligence</em> (pp. 25–33). Springer.</p>
+<p>Ibrahim, S., Mostafa, M., Jnadi, A., Salloum, H., &amp; Osinenko, P. (2024). Comprehensive overview of reward engineering and shaping in advancing reinforcement learning applications. <em>arXiv preprint arXiv:2408.10215</em>.</p>
+<p>Liang, X., Shu, K., Lee, K., &amp; Abbeel, P. (2022). Reward uncertainty for exploration in preference-based reinforcement learning. <em>arXiv preprint arXiv:2205.12401</em>.</p>
+<p>Ng, A. Y., Harada, D., &amp; Russell, S. (1999). Policy invariance under reward transformations: Theory and application to reward shaping. <em>Proceedings of the International Conference on Machine Learning</em>, 278–287.</p>
+<p>Sorg, J., Lewis, R. L., &amp; Singh, S. (2010). Reward design via online gradient ascent. <em>Advances in Neural Information Processing Systems</em>.</p>
+<p>Tang, H. (2017). #Exploration: A study of count-based exploration for deep reinforcement learning. <em>Advances in Neural Information Processing Systems</em>.</p>
+<p>van Heeswijk, W. J. A. (2022). Natural policy gradients in reinforcement learning explained. <em>arXiv preprint arXiv:2209.01820</em>.</p>
+<p>White, N. M. (1989). Reward or reinforcement: What’s the difference? <em>Neuroscience &amp; Biobehavioral Reviews</em>, 13(2–3), 181–186.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+
+<div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "rljclub-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">🧠 RL Journal Club</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
