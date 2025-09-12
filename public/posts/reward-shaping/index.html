@@ -257,14 +257,19 @@ The genius of PBRS lies in its theoretical guarantee of <strong>policy invarianc
 <p><img loading="lazy" src="Pgrd.png" alt="PGRD performance with A) a poor model and B) a partially observable world."  />
 </p>
 <h4 id="shaping-for-intelligent-exploration">Shaping for Intelligent Exploration<a hidden class="anchor" aria-hidden="true" href="#shaping-for-intelligent-exploration">#</a></h4>
-<p><strong>Novelty-Driven (Hash-Based Exploration)</strong></p>
+<p>In problems where the main difficulty is not just sparsity but also finding novel states, the reward can be shaped to explicitly encourage exploration.</p>
+<p><strong>Novelty-Driven (Hash-Based Exploration)</strong>
+To encourage exploration in high-dimensional spaces, Tang (2017) introduced a method that rewards visiting low-count states. Since tracking visits for every unique state is impossible in continuous spaces, this method uses a hash function $\phi(s)$ to group similar states. The intrinsic reward is then inversely proportional to the visitation count of the state&rsquo;s hash code, encouraging the agent to visit less-explored regions of the state space.</p>
+<p>$$R_{int}(s) = \frac{1}{\sqrt{N(\phi(s))}}$$</p>
 <p><img loading="lazy" src="hash_result.png" alt="SimHash hash-based exploration results."  />
 </p>
-<p><strong>Uncertainty-Driven (RUNE)</strong></p>
+<p><strong>Uncertainty-Driven (RUNE)</strong>
+Another sophisticated approach is to reward the agent for taking actions that reduce its uncertainty about the reward function itself. In <strong>Reward Uncertainty for Exploration (RUNE)</strong>, an ensemble of reward models is trained on human preferences. The agent is rewarded based on both the mean prediction of the ensemble (exploitation) and the standard deviation of the predictions (exploration). This explicitly drives the agent to explore areas where it is most uncertain about the potential rewards (Liang et al., 2022).</p>
+<p>$$R_{total} = \mathbb{E}_{i}\left[\hat{R}<em>i\right] + \beta \cdot \text{Std}</em>{i}\left[\hat{R}_i\right]$$</p>
 <p><img loading="lazy" src="Rune.png" alt="RUNE uses uncertainty in ensemble learned reward functions as exploration bonus."  />
 </p>
-<p>an example of RUNE model
-<img loading="lazy" src="RUNE_generativemodel_network.png" alt="RUNE generative model network architecture"  />
+<p><strong>Image Explanation:</strong> This diagram illustrates the core concept of RUNE. The agent interacts with the environment, and its experiences are used to train an &ldquo;ensemble&rdquo; of several different reward function models, all trying to predict human preferences. When deciding on an action, the agent&rsquo;s total reward is calculated in two parts: 1) the <strong>mean</strong> of the ensemble&rsquo;s predictions, which encourages the agent to exploit what it already knows, and 2) the <strong>standard deviation</strong> of the predictions, which provides an intrinsic bonus for exploring states where the models disagree, signifying high uncertainty.</p>
+<p><img loading="lazy" src="RUNE_generativemodel_network.png" alt="RUNE generative model network architecture"  />
 </p>
 <h4 id="inferring-true-objectives-to-prevent-reward-hacking">Inferring True Objectives to Prevent Reward Hacking<a hidden class="anchor" aria-hidden="true" href="#inferring-true-objectives-to-prevent-reward-hacking">#</a></h4>
 <p>Manually designed rewards are often flawed and can be exploited by agents, a problem known as <strong>reward hacking</strong>. To mitigate this, we can infer the &ldquo;true&rdquo; objective from expert demonstrations rather than specifying it directly.</p>

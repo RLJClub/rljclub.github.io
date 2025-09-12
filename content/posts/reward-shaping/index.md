@@ -71,17 +71,25 @@ The genius of PBRS lies in its theoretical guarantee of **policy invariance**. N
 ![PGRD performance with A) a poor model and B) a partially observable world.](Pgrd.png)
 
 #### Shaping for Intelligent Exploration
+In problems where the main difficulty is not just sparsity but also finding novel states, the reward can be shaped to explicitly encourage exploration.
 
 **Novelty-Driven (Hash-Based Exploration)**
+To encourage exploration in high-dimensional spaces, Tang (2017) introduced a method that rewards visiting low-count states. Since tracking visits for every unique state is impossible in continuous spaces, this method uses a hash function $\phi(s)$ to group similar states. The intrinsic reward is then inversely proportional to the visitation count of the state's hash code, encouraging the agent to visit less-explored regions of the state space.
+
+$$R_{int}(s) = \frac{1}{\sqrt{N(\phi(s))}}$$
 
 ![SimHash hash-based exploration results.](hash_result.png)
 
 **Uncertainty-Driven (RUNE)**
+Another sophisticated approach is to reward the agent for taking actions that reduce its uncertainty about the reward function itself. In **Reward Uncertainty for Exploration (RUNE)**, an ensemble of reward models is trained on human preferences. The agent is rewarded based on both the mean prediction of the ensemble (exploitation) and the standard deviation of the predictions (exploration). This explicitly drives the agent to explore areas where it is most uncertain about the potential rewards (Liang et al., 2022).
+
+$$R_{total} = \mathbb{E}_{i}\left[\hat{R}_i\right] + \beta \cdot \text{Std}_{i}\left[\hat{R}_i\right]$$
 
 ![RUNE uses uncertainty in ensemble learned reward functions as exploration bonus.](Rune.png)
 
 
-an example of RUNE model
+**Image Explanation:** This diagram illustrates the core concept of RUNE. The agent interacts with the environment, and its experiences are used to train an "ensemble" of several different reward function models, all trying to predict human preferences. When deciding on an action, the agent's total reward is calculated in two parts: 1) the **mean** of the ensemble's predictions, which encourages the agent to exploit what it already knows, and 2) the **standard deviation** of the predictions, which provides an intrinsic bonus for exploring states where the models disagree, signifying high uncertainty.
+
 ![RUNE generative model network architecture](RUNE_generativemodel_network.png)
 
 #### Inferring True Objectives to Prevent Reward Hacking
