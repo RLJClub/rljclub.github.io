@@ -1,0 +1,43 @@
+{{/* layouts/shortcodes/poster.html */}}
+{{- $alt := .Get "alt" | default "Poster preview" -}}
+{{- $src := .Get "src" -}}
+{{- $pdf := .Get "pdf" -}}
+
+{{/* Prefer page-bundle resources; fall back to /assets (Hugo pipeline) or /static */}}
+{{- $imgRes := .Page.Resources.GetMatch $src -}}
+{{- if not $imgRes }}{{ $imgRes = resources.Get (printf "img/%s" $src) }}{{ end -}}
+{{- $pdfRes := .Page.Resources.GetMatch $pdf -}}
+{{- if not $pdfRes }}{{ $pdfRes = resources.Get (printf "img/%s" $pdf) }}{{ end -}}
+
+{{- $imgURL := cond $imgRes $imgRes.RelPermalink (printf "/img/%s" $src | relURL) -}}
+{{- $pdfURL := cond $pdfRes $pdfRes.RelPermalink (printf "/img/%s" $pdf | relURL) -}}
+
+<div class="poster-block" style="text-align:center;position:relative;">
+  <!-- Overlay loader centered over the image area -->
+  <div class="poster-loader" role="status" aria-live="polite" aria-busy="true">
+    <div class="spinner" aria-hidden="true"></div>
+    <div class="loader-text">Preparing preview…</div>
+  </div>
+
+  <!-- Keep your size exactly: max-width:100%; height:auto -->
+  <img
+    class="poster-img"
+    alt="{{ $alt }}"
+    loading="eager"
+    decoding="async"
+    src="{{ $imgURL }}"
+    style="max-width:100%;height:auto;border-radius:14px;border:1px solid var(--card-border);background:#fff;box-shadow:var(--shadow);"
+    onload="this.previousElementSibling.style.display='none'">
+
+  <div style="margin-top:.9rem;">
+    <a class="btn" href="{{ $pdfURL }}" download>Download the PDF</a>
+  </div>
+</div>
+
+<noscript>
+  <div class="note" style="margin-top:1rem">
+    JavaScript is disabled.
+    <a href="{{ $imgURL }}">Open the PNG</a> or
+    <a href="{{ $pdfURL }}">download the PDF</a>.
+  </div>
+</noscript>
